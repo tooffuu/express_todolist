@@ -20,6 +20,27 @@ app.get("/todos", async (req, res) => {
   res.json(rows);
 });
 
+app.get("/todos/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const [rows] = await pool.query(
+    `
+    SELECT *
+    FROM todo
+    WHERE id = ?
+  `,
+    [id]
+  );
+  if (rows.length === 0) {
+    res.status(404).json({
+      msg: "not found",
+    });
+    return;
+  }
+
+  res.json(rows[0]);
+});
+
 app.get("/", (req, res) => {
   res.send("Hello World"); // res.send 에 인자는 문자로 들어가야 함, 숫자 x
 });
