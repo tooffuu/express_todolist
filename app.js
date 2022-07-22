@@ -1,5 +1,6 @@
 import express from "express";
 import mysql from "mysql2/promise";
+import axios from "axios";
 
 const app = express();
 app.use(express.json());
@@ -91,6 +92,37 @@ app.patch("/todos/:id", async (req, res) => {
   });
 });
 
+app.delete("/todos/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const [[todoRow]] = await pool.query(
+    `
+    SELECT * FROM todo
+    WHERE id = ?
+    `,
+    [id]
+  );
+
+  if (todoRow === undefined) {
+    res.status(404).json({
+      msg: "not found",
+    });
+    return;
+  }
+
+  const [rs] = await pool.query(
+    `
+    DELETE FROM todo
+    WHERE id = ?
+    `,
+    [id]
+  );
+
+  res.json({
+    msg: `${id}번 할 일이 삭제되었습니다.`,
+  });
+});
+
 // app.get("/", (req, res) => {
 //   res.send("Hello World"); // res.send 에 인자는 문자로 들어가야 함, 숫자 x
 // });
@@ -98,3 +130,33 @@ app.patch("/todos/:id", async (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+// app.delete("/todos/:id", async (req, res) => {
+//   const { id } = req.params;
+
+//   const [todorows] = await pool.query(
+//     `
+//     SELECT * FROM todo
+//     WHERE id = ?
+//     `,
+//     [id]
+//   );
+
+//   if (todorows === undefined) {
+//     res.status(404).json({
+//       msg: "not found",
+//     });
+//   }
+
+//   const [rs] = await pool.query(
+//     `
+//     DELETE * FROM todo
+//     WHERE id = ?
+//     `,
+//     [id]
+//   );
+
+//   res.json({
+//     msg: `${id}번 할 일이 삭제되었습니다.`,
+//   });
+// });
