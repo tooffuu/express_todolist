@@ -1,5 +1,6 @@
 import express from "express";
 import mysql from "mysql2/promise";
+
 const app = express();
 app.use(express.json());
 
@@ -89,28 +90,6 @@ app.patch("/todos/:id", async (req, res) => {
     msg: `${id}번 할 일이 수정되었습니다.`,
   });
 });
-
-// app.delete("todos/:id", async (req, res) => {
-//   const { id } = res.params;
-
-//   const [rows] = await pool.query(
-//     `
-//      SELECT *
-//      FROM todo
-//      WHERE id = ?
-//     `,
-//     [id]
-//   );
-
-//   if (rows.length === 0) {
-//     res.status(404).json({
-//       msg: "not found",
-//     });
-//     return;
-//   }
-
-//   res.json(rows[0]);
-// });
 
 // app.get("/", (req, res) => {
 //   res.send("Hello World"); // res.send 에 인자는 문자로 들어가야 함, 숫자 x
