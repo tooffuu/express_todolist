@@ -28,10 +28,9 @@ app.get("/todos/:id", async (req, res) => {
 
   const [rows] = await pool.query(
     `
-    SELECT *
-    FROM todo
+    SELECT * FROM todo
     WHERE id = ?
-  `,
+    `,
     [id]
   );
 
@@ -51,10 +50,9 @@ app.patch("/todos/:id", async (req, res) => {
 
   const [rows] = await pool.query(
     `
-      SELECT *
-      FROM todo
-      WHERE id = ?
-      `,
+    SELECT * FROM todo
+    WHERE id = ?
+    `,
     [id]
   );
 
@@ -80,9 +78,9 @@ app.patch("/todos/:id", async (req, res) => {
 
   const [rs] = await pool.query(
     `
-      UPDATE todo
-      SET perform_date =?, content = ?
-      WHERE id = ?
+    UPDATE todo
+    SET perform_date = ?, content = ?
+    WHERE id = ?
     `,
     [perform_date, content, id]
   );
@@ -92,18 +90,57 @@ app.patch("/todos/:id", async (req, res) => {
   });
 });
 
+// app.patch("/todos/:id", async (req, res) => {
+//   const { id } = req.params;
+//   const { is_completed } = req.body;
+
+//   const [rows] = await pool.query(
+//     `
+//     SELECT * FROM todo
+//     WHERE id = ?
+//     `,
+//     [id]
+//   );
+
+//   if (rows.length === 0) {
+//     res.status(404).json({
+//       msg: "not found",
+//     });
+//   }
+
+//   if (!is_completed) {
+//     res.status(400).json({
+//       msg: "is_completed required",
+//     });
+//     return;
+//   }
+
+//   const [rs] = await pool.query(
+//     `
+//     UPDATE todo
+//     SET is_completed = ?
+//     WHERE id = ?
+//     `,
+//     [is_completed, id]
+//   );
+
+//   res.json({
+//     msg: `${id}번 할 일이 수정되었습니다.`,
+//   });
+// });
+
 app.delete("/todos/:id", async (req, res) => {
   const { id } = req.params;
 
-  const [[todoRow]] = await pool.query(
+  const [[todoRows]] = await pool.query(
     `
-    SELECT * FROM todo
-    WHERE id = ?
-    `,
+  SELECT * FROM todo
+  WHERE id = ?
+  `,
     [id]
   );
 
-  if (todoRow === undefined) {
+  if (todoRows === undefined) {
     res.status(404).json({
       msg: "not found",
     });
@@ -130,33 +167,3 @@ app.delete("/todos/:id", async (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-
-// app.delete("/todos/:id", async (req, res) => {
-//   const { id } = req.params;
-
-//   const [todorows] = await pool.query(
-//     `
-//     SELECT * FROM todo
-//     WHERE id = ?
-//     `,
-//     [id]
-//   );
-
-//   if (todorows === undefined) {
-//     res.status(404).json({
-//       msg: "not found",
-//     });
-//   }
-
-//   const [rs] = await pool.query(
-//     `
-//     DELETE * FROM todo
-//     WHERE id = ?
-//     `,
-//     [id]
-//   );
-
-//   res.json({
-//     msg: `${id}번 할 일이 삭제되었습니다.`,
-//   });
-// });
